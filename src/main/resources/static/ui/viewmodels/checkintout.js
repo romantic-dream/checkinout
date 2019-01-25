@@ -1,11 +1,27 @@
 const ticket = 'HoagFKDcsGMVCIY2vOjf9h4fRuzsbE5TzcnPMTHxlj6olx3N4GckLUx4mtEQgO9YikYnmcmepzqhoLSpdut_qQ';
 
+const timestamp = Date.now();
+
+const nonceStr = Math.random().toString(16).substr(2);
+
+const urlStr = location.href;
+console.log(urlStr);
+
+const originParams = 'jsapi_ticket=' + ticket
+    + '&noncestr=' + nonceStr
+    + '&timestamp=' + timestamp
+    + '&url=' + urlStr;
+
+var shaObj = new jsSHA("SHA-1", "TEXT");
+shaObj.update(originParams);
+var signature = shaObj.getHash("HEX");
+
 wx.config({
     debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
     appId: 'wx2938bf4d8010cb83', // 必填，公众号的唯一标识
-    timestamp: 1548379300842, // 必填，生成签名的时间戳
-    nonceStr: '1234567890abcdef', // 必填，生成签名的随机串
-    signature: '075e9e2d0fc8e3bf21c318760570e233cbfefe3f',// 必填，签名
+    timestamp: timestamp, // 必填，生成签名的时间戳
+    nonceStr: nonceStr, // 必填，生成签名的随机串
+    signature: signature,// 必填，签名
     jsApiList: [
         'checkJsApi',
         'chooseImage',
@@ -105,7 +121,7 @@ var app = new Vue({
                     var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
                     console.log(result);
                 },
-                fail:function(error){
+                fail: function (error) {
                     console.log(error);
                 }
             });
