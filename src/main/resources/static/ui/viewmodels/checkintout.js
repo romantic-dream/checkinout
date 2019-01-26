@@ -1,4 +1,4 @@
-const ticket = 'HoagFKDcsGMVCIY2vOjf9h4fRuzsbE5TzcnPMTHxlj6olx3N4GckLUx4mtEQgO9YikYnmcmepzqhoLSpdut_qQ';
+const ticket = 'HoagFKDcsGMVCIY2vOjf9h4fRuzsbE5TzcnPMTHxlj7CsqLZQ9otz6p5NIU8-H6ZIbqjZtg1tvDPMIW0BhjbOw';
 
 const timestamp = Date.now();
 
