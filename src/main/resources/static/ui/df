@@ -5,3 +5,12 @@ https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx293
 https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi
 
 jsapi_ticket=HoagFKDcsGMVCIY2vOjf9h4fRuzsbE5TzcnPMTHxlj6qOPqkkHgc9N12fqa7OBo_JzWJXutgE2thhRirVUgNsQ&noncestr=1234567890abcdef&timestamp=1548379300842&url=http://192.168.137.1:8080/ui/checkinout.html
+
+scope为snsapi_base
+https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx2938bf4d8010cb83&redirect_uri=http%3a%2f%2f59.110.227.175%2fui%2fcheckinout.html&response_type=code&scope=snsapi_base#wechat_redirect
+
+
+scope为snsapi_userinfo
+https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx2938bf4d8010cb83&redirect_uri=http%3a%2f%2f59.110.227.175%2fui%2fcheckinout.html&response_type=code&scope=snsapi_userinfo#wechat_redirect
+
+{"access_token":"18_s9c61ivIPl5czkAuqb8_l4ZSHaR1bFMUynJKQ66EkdEbJ0Pf9sE5hPA7GmQpxwx4xYJM8J9bRW7L79_601SWug","expires_in":7200,"refresh_token":"18_w2369TslXp9L8pz-Ps_WVGM4kZ3rR1Zq873_c1JCQcBmowVEeHShOCKHLiyTtt9kq6jvfbso46L23JKfEFf7yA","openid":"oo7si1eVBb6OYP-zGINj5yspYv7E","scope":"snsapi_base"}
