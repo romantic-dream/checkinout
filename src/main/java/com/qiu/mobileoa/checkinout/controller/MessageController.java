@@ -41,29 +41,45 @@ public class MessageController {
     public Object receive(@RequestBody JSONObject jsonObject) throws IOException {
         logger.info("{}",jsonObject);
         String msgType = jsonObject.getString("MsgType");
-        if (msgType == "event"){
+        if (msgType.equals("event")){
             String fromUserName = jsonObject.getString("FromUserName");
             String toUserName = jsonObject.getString("ToUserName");
-            JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
-            String nickname = userInfo.getString("nickname");
-            String openid = userInfo.getString("openid");
+            String event = jsonObject.getString("Event");
+            if (event.equals("subscribe")){
+                JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
+                String nickname = userInfo.getString("nickname");
+                String openid = userInfo.getString("openid");
 
-            MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
-            messageAutoResponseDTO.setToUserName(fromUserName);
-            messageAutoResponseDTO.setFromUserName(toUserName);
-            messageAutoResponseDTO.setCreateTime(new Date().getTime());
-            messageAutoResponseDTO.setMsgType("text");
-            messageAutoResponseDTO.setContent(String.format("你好，%s,欢迎订阅！",nickname));
+                MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
+                messageAutoResponseDTO.setToUserName(fromUserName);
+                messageAutoResponseDTO.setFromUserName(toUserName);
+                messageAutoResponseDTO.setCreateTime(new Date().getTime());
+                messageAutoResponseDTO.setMsgType("text");
+                messageAutoResponseDTO.setContent(String.format("你好，%s,欢迎订阅！",nickname));
 
-            User user = new User();
-            user.setOpenid(openid);
-            Integer gender = userInfo.getInteger("sex");
-            String avatarUrl = userInfo.getString("headimgurl");
-            user.setNickname(nickname);
-            user.setGender(gender);
-            user.setAvatarUrl(avatarUrl);
-            userService.create(user);
-            return messageAutoResponseDTO;
+                User user = new User();
+                user.setOpenid(openid);
+                Integer gender = userInfo.getInteger("sex");
+                String avatarUrl = userInfo.getString("headimgurl");
+                user.setNickname(nickname);
+                user.setGender(gender);
+                user.setAvatarUrl(avatarUrl);
+                userService.create(user);
+                return messageAutoResponseDTO;
+            }
+
+            if (event.equals("unsubscribe")){
+                JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
+                String nickname = userInfo.getString("nickname");
+                String openid = userInfo.getString("openid");
+
+                MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
+                messageAutoResponseDTO.setToUserName(fromUserName);
+                messageAutoResponseDTO.setFromUserName(toUserName);
+                messageAutoResponseDTO.setCreateTime(new Date().getTime());
+                messageAutoResponseDTO.setMsgType("text");
+                return messageAutoResponseDTO;
+            }
         }
 
 
