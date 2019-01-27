@@ -49,7 +49,16 @@ public class MessageController {
                 JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
                 String nickname = userInfo.getString("nickname");
                 String openid = userInfo.getString("openid");
-
+                User oldUser = userService.getById(openid);
+                if (oldUser!=null){
+                    MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
+                    messageAutoResponseDTO.setToUserName(fromUserName);
+                    messageAutoResponseDTO.setFromUserName(toUserName);
+                    messageAutoResponseDTO.setCreateTime(new Date().getTime());
+                    messageAutoResponseDTO.setMsgType("text");
+                    messageAutoResponseDTO.setContent(String.format("你好，%s,欢迎订阅！",nickname));
+                    return messageAutoResponseDTO;
+                }
                 MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
                 messageAutoResponseDTO.setToUserName(fromUserName);
                 messageAutoResponseDTO.setFromUserName(toUserName);
