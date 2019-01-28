@@ -67,19 +67,11 @@ public class MessageController {
                 String openid = userInfo.getString("openid");
                 User oldUser = userService.getById(openid);
                 if (oldUser!=null){
-                    MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
-                    messageAutoResponseDTO.setToUserName(fromUserName);
-                    messageAutoResponseDTO.setFromUserName(toUserName);
-                    messageAutoResponseDTO.setCreateTime(new Date().getTime());
-                    messageAutoResponseDTO.setMsgType("text");
+                    MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
                     messageAutoResponseDTO.setContent(String.format("你好，%s,欢迎订阅！",nickname));
                     return messageAutoResponseDTO;
                 }
-                MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
-                messageAutoResponseDTO.setToUserName(fromUserName);
-                messageAutoResponseDTO.setFromUserName(toUserName);
-                messageAutoResponseDTO.setCreateTime(new Date().getTime());
-                messageAutoResponseDTO.setMsgType("text");
+                MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
                 messageAutoResponseDTO.setContent(String.format("你好，%s,欢迎订阅！",nickname));
 
                 User user = new User();
@@ -98,11 +90,7 @@ public class MessageController {
                 String nickname = userInfo.getString("nickname");
                 String openid = userInfo.getString("openid");
 
-                MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
-                messageAutoResponseDTO.setToUserName(fromUserName);
-                messageAutoResponseDTO.setFromUserName(toUserName);
-                messageAutoResponseDTO.setCreateTime(new Date().getTime());
-                messageAutoResponseDTO.setMsgType("text");
+                MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
                 return messageAutoResponseDTO;
             }
 
@@ -113,6 +101,7 @@ public class MessageController {
                 position.put("latitude",latitude);
                 position.put("longitude",longitude);
                 String positionUserKey = "position" + fromUserName;
+
                 redisTemplate.opsForHash().putAll(positionUserKey,position);
                 redisTemplate.expire(positionUserKey,300, TimeUnit.SECONDS);
                 return "success";
@@ -141,19 +130,16 @@ public class MessageController {
                     //计算当前位置与公司打卡位置的距离
                     double distance = EarthCalc.harvesineDistance(userCurrentPosition, checkPosition); //in meters
                     if(distance>200){
-                        MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
-                        messageAutoResponseDTO.setToUserName(fromUserName);
-                        messageAutoResponseDTO.setFromUserName(toUserName);
-                        messageAutoResponseDTO.setCreateTime(new Date().getTime());
-                        messageAutoResponseDTO.setMsgType("text");
+                        MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
                         messageAutoResponseDTO.setContent("不在打卡范围内，别想偷懒！");
                     }
 
+                    //设置上下班的时间
                     Date now = new Date();
                     LocalTime time = now.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
                     LocalTime onWorkStart = LocalTime.parse("08:00:00");
                     LocalTime onWorkEnd = LocalTime.parse("09:00:00");
-                    LocalTime offWorkStart = LocalTime.parse("17:00:00");
+                    LocalTime offWorkStart = LocalTime.parse("14:00:00");
                     LocalTime offWorkEnd = LocalTime.parse("18:00:00");
 
                     String content="";
@@ -166,11 +152,7 @@ public class MessageController {
                     }else {
                         content="不在打卡时间内";
                     }
-                    MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
-                    messageAutoResponseDTO.setToUserName(fromUserName);
-                    messageAutoResponseDTO.setFromUserName(toUserName);
-                    messageAutoResponseDTO.setCreateTime(new Date().getTime());
-                    messageAutoResponseDTO.setMsgType("text");
+                    MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
                     messageAutoResponseDTO.setContent(content);
                     return messageAutoResponseDTO;
                 }
@@ -181,5 +163,14 @@ public class MessageController {
 
 
         return null;
+    }
+
+    private MessageAutoResponseDTO getMessageAutoResponseDTO(String fromUserName, String toUserName) {
+        MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
+        messageAutoResponseDTO.setToUserName(fromUserName);
+        messageAutoResponseDTO.setFromUserName(toUserName);
+        messageAutoResponseDTO.setCreateTime(new Date().getTime());
+        messageAutoResponseDTO.setMsgType("text");
+        return messageAutoResponseDTO;
     }
 }
