@@ -2,7 +2,6 @@ package com.qiu.mobileoa.checkinout.service.impl;
 
 import com.qiu.mobileoa.checkinout.dao.CheckInOutRecordMapper;
 import com.qiu.mobileoa.checkinout.dao.UserMapper;
-import com.qiu.mobileoa.checkinout.enumeration.CheckType;
 import com.qiu.mobileoa.checkinout.po.CheckInOutRecord;
 import com.qiu.mobileoa.checkinout.po.User;
 import com.qiu.mobileoa.checkinout.service.UserService;
@@ -32,11 +31,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void checkInOut(String openId, CheckType checkType, Date time) {
+    public void checkInOut(String openId, Date time) {
         CheckInOutRecord checkInOutRecord = new CheckInOutRecord();
         checkInOutRecord.setOpenid(openId);
         checkInOutRecord.setTime(time);
-        checkInOutRecord.setType(checkType.ordinal());
         checkInOutRecordMapper.insert(checkInOutRecord);
     }
 }

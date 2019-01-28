@@ -1,7 +1,6 @@
 package com.qiu.mobileoa.checkinout.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.qiu.mobileoa.checkinout.enumeration.CheckType;
 import com.qiu.mobileoa.checkinout.service.UserService;
 import com.qiu.mobileoa.checkinout.service.impl.WeixinClientImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,6 @@ public class UserController {
         String access_token = snsAccessToken.getString("access_token");
         String openid = snsAccessToken.getString("openid");
         JSONObject snsUserInfo = weixinClient.getSnsUserInfo(access_token, openid);
-        userService.checkInOut(openid, CheckType.CheckIn,new Date());
+        userService.checkInOut(openid,new Date());
     }
 }
