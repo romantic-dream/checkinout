@@ -112,8 +112,8 @@ public class MessageController {
             }
 
             if (event.equals("CLICK")){
-                Long morningTime = (Long) redisTemplate.opsForValue().get(fromUserName + "onWork");
-                Long noonTime = (Long) redisTemplate.opsForValue().get(fromUserName+"offWork");
+                Long morningTime = Long.valueOf(String.valueOf(redisTemplate.opsForValue().get(fromUserName + "onWork"))) ;
+                Long noonTime = Long.valueOf(String.valueOf(redisTemplate.opsForValue().get(fromUserName+"offWork")));
                 Long nowTime = new Date().getTime();
                 if (morningTime!=null && nowTime<(morningTime+(5*60*60*1000))){
                     MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
@@ -170,6 +170,7 @@ public class MessageController {
                         onWorkTime.set(Calendar.SECOND, 0);
                         onWorkTime.set(Calendar.MINUTE, 0);
                         onWorkTime.set(Calendar.MILLISECOND,0);
+
                         redisTemplate.opsForValue().set(fromUserName+"onWork",onWorkTime.getTimeInMillis());
                         redisTemplate.expire(fromUserName+"onWork",5, TimeUnit.HOURS);
                     }else if (time.isAfter(offWorkStart)&&time.isBefore(offWorkEnd)){
