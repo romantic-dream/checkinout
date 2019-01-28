@@ -160,8 +160,8 @@ public class MessageController {
                     LocalTime time = now.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
                     LocalTime onWorkStart = LocalTime.parse("08:00:00");
                     LocalTime onWorkEnd = LocalTime.parse("09:00:00");
-                    LocalTime offWorkStart = LocalTime.parse("14:00:00");
-                    LocalTime offWorkEnd = LocalTime.parse("18:00:00");
+                    LocalTime offWorkStart = LocalTime.parse("17:00:00");
+                    LocalTime offWorkEnd = LocalTime.parse("20:00:00");
 
                     String content="";
                     if (time.isAfter(onWorkStart)&&time.isBefore(onWorkEnd)){

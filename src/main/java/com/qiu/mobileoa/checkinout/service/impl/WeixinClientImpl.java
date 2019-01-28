@@ -26,6 +26,8 @@ public class WeixinClientImpl implements WeixinClient {
     private String secret;
 
 
+
+
     public WeixinClientImpl(@Value("${weixin.baseUrl}") String url) throws MalformedURLException {
         retrofit = new Retrofit.Builder()
                 .baseUrl(url)
