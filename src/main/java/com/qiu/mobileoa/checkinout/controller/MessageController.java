@@ -157,7 +157,7 @@ public class MessageController {
                     LocalTime onWorkStart = LocalTime.parse("08:00:00");
                     LocalTime onWorkEnd = LocalTime.parse("09:00:00");
                     LocalTime offWorkStart = LocalTime.parse("17:00:00");
-                    LocalTime offWorkEnd = LocalTime.parse("20:00:00");
+                    LocalTime offWorkEnd = LocalTime.parse("18:00:00");
 
                     String content="";
                     if (time.isAfter(onWorkStart)&&time.isBefore(onWorkEnd)){
@@ -170,7 +170,7 @@ public class MessageController {
                         onWorkTime.set(Calendar.MILLISECOND,0);
 
                         redisTemplate.opsForValue().set(fromUserName+"onWork",onWorkTime.getTimeInMillis());
-                        redisTemplate.expire(fromUserName+"onWork",5, TimeUnit.HOURS);
+                        redisTemplate.expire(fromUserName+"onWork",8, TimeUnit.HOURS);
                     }else if (time.isAfter(offWorkStart)&&time.isBefore(offWorkEnd)){
                         content="下班打卡成功";
                         userService.checkInOut(fromUserName,new Date());
