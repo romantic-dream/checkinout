@@ -12,4 +12,7 @@ public interface WeixinApi {
 
     @GET("sns/userinfo")
     Call<JSONObject> getSnsUserInfo(@Query("access_token") String access_token,@Query("openid") String openid,@Query("lang") String lang);
+
+    @GET("sns/oauth2/refresh_token")
+    Call<JSONObject> refreshToken(@Query("appid") String appid,@Query("grant_type") String grant_type,@Query("refresh_token") String refresh_token);
 }

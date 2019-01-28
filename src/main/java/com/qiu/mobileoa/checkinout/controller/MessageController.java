@@ -58,7 +58,7 @@ public class MessageController {
     }*/
 
     @PostMapping(value = "receive",produces = MediaType.APPLICATION_XML_VALUE)
-    public Object receive(@RequestBody JSONObject jsonObject) throws IOException, ParseException {
+    public Object receive(@RequestBody JSONObject jsonObject) throws IOException {
         logger.info("{}",jsonObject);
         String msgType = jsonObject.getString("MsgType");
         if (msgType.equals("event")){
@@ -66,6 +66,11 @@ public class MessageController {
             String toUserName = jsonObject.getString("ToUserName");
             String event = jsonObject.getString("Event");
             if (event.equals("subscribe")){
+                if (new Date().getTime()>(Long)redisTemplate.opsForValue().get("access_token")+30){
+                    JSONObject jsonObject1 = weixinClient.getRefreshToken(redisTemplate.opsForValue().get("refresh_token").toString());
+                    String access_token = jsonObject1.getString("access_token");
+                    this.accessToken=access_token;
+                }
                 JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
                 String nickname = userInfo.getString("nickname");
                 String openid = userInfo.getString("openid");
