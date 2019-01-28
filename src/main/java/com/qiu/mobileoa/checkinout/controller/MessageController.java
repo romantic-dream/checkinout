@@ -8,6 +8,7 @@ import com.qiu.mobileoa.checkinout.dto.MessageAutoResponseDTO;
 import com.qiu.mobileoa.checkinout.po.User;
 import com.qiu.mobileoa.checkinout.service.impl.UserServiceImpl;
 import com.qiu.mobileoa.checkinout.service.impl.WeixinClientImpl;
+import org.apache.ibatis.annotations.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,11 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -54,7 +58,7 @@ public class MessageController {
     }*/
 
     @PostMapping(value = "receive",produces = MediaType.APPLICATION_XML_VALUE)
-    public Object receive(@RequestBody JSONObject jsonObject) throws IOException {
+    public Object receive(@RequestBody JSONObject jsonObject) throws IOException, ParseException {
         logger.info("{}",jsonObject);
         String msgType = jsonObject.getString("MsgType");
         if (msgType.equals("event")){
@@ -108,6 +112,20 @@ public class MessageController {
             }
 
             if (event.equals("CLICK")){
+                Long morningTime = (Long) redisTemplate.opsForValue().get(fromUserName + "onWork");
+                Long noonTime = (Long) redisTemplate.opsForValue().get(fromUserName+"offWork");
+                Long nowTime = new Date().getTime();
+                if (morningTime!=null && nowTime<(morningTime+(5*60*60*1000))){
+                    MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
+                    messageAutoResponseDTO.setContent("已经打过卡了哦！");
+                    return messageAutoResponseDTO;
+                }
+
+                if (noonTime!=null && nowTime<(noonTime+(19*60*60*1000))){
+                    MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
+                    messageAutoResponseDTO.setContent("已经打过卡了哦！");
+                    return messageAutoResponseDTO;
+                }
                 String eventKey = jsonObject.getString("EventKey");
                 if (eventKey == null){
                     return "success";
@@ -132,6 +150,7 @@ public class MessageController {
                     if(distance>200){
                         MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
                         messageAutoResponseDTO.setContent("不在打卡范围内，别想偷懒！");
+                        return messageAutoResponseDTO;
                     }
 
                     //设置上下班的时间
@@ -146,9 +165,23 @@ public class MessageController {
                     if (time.isAfter(onWorkStart)&&time.isBefore(onWorkEnd)){
                         content="上班打卡成功";
                         userService.checkInOut(fromUserName,new Date());
+                        Calendar onWorkTime = Calendar.getInstance();
+                        onWorkTime.set(Calendar.HOUR, 9);
+                        onWorkTime.set(Calendar.SECOND, 0);
+                        onWorkTime.set(Calendar.MINUTE, 0);
+                        onWorkTime.set(Calendar.MILLISECOND,0);
+                        redisTemplate.opsForValue().set(fromUserName+"onWork",onWorkTime);
+                        redisTemplate.expire(fromUserName+"onWork",5, TimeUnit.HOURS);
                     }else if (time.isAfter(offWorkStart)&&time.isBefore(offWorkEnd)){
                         content="下班打卡成功";
                         userService.checkInOut(fromUserName,new Date());
+                        Calendar offWorkTime = Calendar.getInstance();
+                        offWorkTime.set(Calendar.HOUR, 18);
+                        offWorkTime.set(Calendar.SECOND, 0);
+                        offWorkTime.set(Calendar.MINUTE, 0);
+                        offWorkTime.set(Calendar.MILLISECOND,0);
+                        redisTemplate.opsForValue().set(fromUserName+"offWork",offWorkTime);
+                        redisTemplate.expire(fromUserName+"offWork",19, TimeUnit.HOURS);
                     }else {
                         content="不在打卡时间内";
                     }
