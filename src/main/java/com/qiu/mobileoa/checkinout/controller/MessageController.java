@@ -112,7 +112,7 @@ public class MessageController {
             }
 
             if (event.equals("CLICK")){
-                Long morningTime = Long.valueOf(String.valueOf(redisTemplate.opsForValue().get(fromUserName + "onWork"))) ;
+                /*Long morningTime = Long.valueOf(String.valueOf(redisTemplate.opsForValue().get(fromUserName + "onWork"))) ;
                 Long noonTime = Long.valueOf(String.valueOf(redisTemplate.opsForValue().get(fromUserName+"offWork")));
                 Long nowTime = new Date().getTime();
                 if (morningTime!=null && nowTime<(morningTime+(5*60*60*1000))){
@@ -125,7 +125,7 @@ public class MessageController {
                     MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
                     messageAutoResponseDTO.setContent("已经打过卡了哦！");
                     return messageAutoResponseDTO;
-                }
+                }*/
                 String eventKey = jsonObject.getString("EventKey");
                 if (eventKey == null){
                     return "success";
@@ -165,24 +165,24 @@ public class MessageController {
                     if (time.isAfter(onWorkStart)&&time.isBefore(onWorkEnd)){
                         content="上班打卡成功";
                         userService.checkInOut(fromUserName,new Date());
-                        Calendar onWorkTime = Calendar.getInstance();
+                       /* Calendar onWorkTime = Calendar.getInstance();
                         onWorkTime.set(Calendar.HOUR, 9);
                         onWorkTime.set(Calendar.SECOND, 0);
                         onWorkTime.set(Calendar.MINUTE, 0);
                         onWorkTime.set(Calendar.MILLISECOND,0);
 
                         redisTemplate.opsForValue().set(fromUserName+"onWork",onWorkTime.getTimeInMillis());
-                        redisTemplate.expire(fromUserName+"onWork",5, TimeUnit.HOURS);
+                        redisTemplate.expire(fromUserName+"onWork",5, TimeUnit.HOURS);*/
                     }else if (time.isAfter(offWorkStart)&&time.isBefore(offWorkEnd)){
                         content="下班打卡成功";
                         userService.checkInOut(fromUserName,new Date());
-                        Calendar offWorkTime = Calendar.getInstance();
+                        /*Calendar offWorkTime = Calendar.getInstance();
                         offWorkTime.set(Calendar.HOUR, 18);
                         offWorkTime.set(Calendar.SECOND, 0);
                         offWorkTime.set(Calendar.MINUTE, 0);
                         offWorkTime.set(Calendar.MILLISECOND,0);
                         redisTemplate.opsForValue().set(fromUserName+"offWork",offWorkTime.getTimeInMillis());
-                        redisTemplate.expire(fromUserName+"offWork",19, TimeUnit.HOURS);
+                        redisTemplate.expire(fromUserName+"offWork",19, TimeUnit.HOURS);*/
                     }else {
                         content="不在打卡时间内";
                     }
