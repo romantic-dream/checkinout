@@ -170,7 +170,7 @@ public class MessageController {
                         onWorkTime.set(Calendar.SECOND, 0);
                         onWorkTime.set(Calendar.MINUTE, 0);
                         onWorkTime.set(Calendar.MILLISECOND,0);
-                        redisTemplate.opsForValue().set(fromUserName+"onWork",onWorkTime);
+                        redisTemplate.opsForValue().set(fromUserName+"onWork",onWorkTime.getTimeInMillis());
                         redisTemplate.expire(fromUserName+"onWork",5, TimeUnit.HOURS);
                     }else if (time.isAfter(offWorkStart)&&time.isBefore(offWorkEnd)){
                         content="下班打卡成功";
@@ -180,7 +180,7 @@ public class MessageController {
                         offWorkTime.set(Calendar.SECOND, 0);
                         offWorkTime.set(Calendar.MINUTE, 0);
                         offWorkTime.set(Calendar.MILLISECOND,0);
-                        redisTemplate.opsForValue().set(fromUserName+"offWork",offWorkTime);
+                        redisTemplate.opsForValue().set(fromUserName+"offWork",offWorkTime.getTimeInMillis());
                         redisTemplate.expire(fromUserName+"offWork",19, TimeUnit.HOURS);
                     }else {
                         content="不在打卡时间内";
