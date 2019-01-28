@@ -99,9 +99,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.qiu.mobileoa.checkinout.po.CheckInOutRecord" useGeneratedKeys="true" keyProperty="id">
-    insert into check_in_out_record ( openId, type,
+    insert into check_in_out_record ( openId,
       time)
-    values ( #{openid,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},
+    values ( #{openid,jdbcType=VARCHAR},
       #{time,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.qiu.mobileoa.checkinout.po.CheckInOutRecord">
