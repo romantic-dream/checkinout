@@ -38,8 +38,9 @@ public class MessageController {
     @Autowired
     private UserServiceImpl userService;
 
-    @Value("${weixin.accessToken}")
-    private String accessToken;
+
+    @Value("${weixin.code}")
+    private String code;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -65,11 +66,12 @@ public class MessageController {
             String fromUserName = jsonObject.getString("FromUserName");
             String toUserName = jsonObject.getString("ToUserName");
             String event = jsonObject.getString("Event");
+            JSONObject snsAccessToken = weixinClient.getSnsAccessToken(code);
+            String accessToken = snsAccessToken.getString("access_token");
             if (event.equals("subscribe")){
                 if (new Date().getTime()>(Long)redisTemplate.opsForValue().get("access_token")+30){
                     JSONObject jsonObject1 = weixinClient.getRefreshToken(redisTemplate.opsForValue().get("refresh_token").toString());
-                    String access_token = jsonObject1.getString("access_token");
-                    this.accessToken=access_token;
+                    accessToken = jsonObject1.getString("access_token");
                 }
                 JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
                 String nickname = userInfo.getString("nickname");
