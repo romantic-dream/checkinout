@@ -75,8 +75,7 @@ public class MessageController {
                 }
                 JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
                 String nickname = userInfo.getString("nickname");
-                String openid = userInfo.getString("openid");
-                User oldUser = userService.getById(openid);
+                User oldUser = userService.getById(fromUserName);
                 if (oldUser!=null){
                     MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
                     messageAutoResponseDTO.setContent(String.format("你好，%s,欢迎订阅！",nickname));
@@ -86,7 +85,7 @@ public class MessageController {
                 messageAutoResponseDTO.setContent(String.format("你好，%s,欢迎订阅！",nickname));
 
                 User user = new User();
-                user.setOpenid(openid);
+                user.setOpenid(fromUserName);
                 Integer gender = userInfo.getInteger("sex");
                 String avatarUrl = userInfo.getString("headimgurl");
                 user.setNickname(nickname);
@@ -137,6 +136,11 @@ public class MessageController {
                 }
 
                 if (eventKey.equals("checkinout")){
+                    JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
+                    String nickname = userInfo.getString("nickname");
+                    logger.info(nickname);
+
+
                     String positionUserKey="position" + fromUserName;
                     Double latitude = (Double) redisTemplate.opsForHash().get(positionUserKey, "latitude");
                     Double longitude = (Double) redisTemplate.opsForHash().get(positionUserKey, "longitude");
