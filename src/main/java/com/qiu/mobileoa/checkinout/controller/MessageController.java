@@ -112,7 +112,7 @@ public class MessageController {
             }
 
             if (event.equals("CLICK")){
-                Long morningTime = (Long) redisTemplate.opsForValue().get(fromUserName + "onWork");
+                /*Long morningTime = (Long) redisTemplate.opsForValue().get(fromUserName + "onWork");
                 Long noonTime = (Long) redisTemplate.opsForValue().get(fromUserName+"offWork");
                 Long nowTime = new Date().getTime();
                 if (morningTime!=null && nowTime<(morningTime+(5*60*60*1000))){
@@ -125,7 +125,7 @@ public class MessageController {
                     MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
                     messageAutoResponseDTO.setContent("已经打过卡了哦！");
                     return messageAutoResponseDTO;
-                }
+                }*/
                 String eventKey = jsonObject.getString("EventKey");
                 if (eventKey == null){
                     return "success";
