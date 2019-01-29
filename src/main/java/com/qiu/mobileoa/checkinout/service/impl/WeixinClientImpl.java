@@ -45,7 +45,7 @@ public class WeixinClientImpl implements WeixinClient {
         weixinApi = retrofit.create(WeixinApi.class);
     }
 
-    @Override
+  /*  @Override
     public JSONObject getSnsAccessToken(String code) throws IOException {
         Call<JSONObject> call = weixinApi.getSnsAccessToken(appid, secret, code, "authorization_code");
         Response<JSONObject> response = call.execute();
@@ -53,8 +53,8 @@ public class WeixinClientImpl implements WeixinClient {
         String refresh_token = jsonObject.getString("refresh_token");
         String access_token = jsonObject.getString("access_token");
         redisTemplate.opsForValue().set("expire_in",new Date().getTime());
-        redisTemplate.opsForValue().set("refresh_token",refresh_token);
         redisTemplate.opsForValue().set("access_token",access_token);
+        redisTemplate.opsForValue().set("refresh_token",refresh_token);
         return jsonObject;
     }
 
@@ -76,6 +76,25 @@ public class WeixinClientImpl implements WeixinClient {
         redisTemplate.opsForValue().set("expire",new Date().getTime());
         redisTemplate.opsForValue().set("refresh_token",refresh_token);
         redisTemplate.opsForValue().set("access_token",access_token);
+        return jsonObject;
+    }*/
+
+    @Override
+    public JSONObject getAccessToken() throws IOException {
+        Call<JSONObject> call = weixinApi.getAccessToken("client_credential", appid, secret);
+        Response<JSONObject> response = call.execute();
+        JSONObject jsonObject = response.body();
+        String access_token = jsonObject.getString("access_token");
+        redisTemplate.opsForValue().set("expire_in",new Date().getTime());
+        redisTemplate.opsForValue().set("access_token",access_token);
+        return jsonObject;
+    }
+
+    @Override
+    public JSONObject getUserInfo(String access_token, String openid) throws IOException {
+        Call<JSONObject> call = weixinApi.getUserInfo(access_token, openid, "zh_CN");
+        Response<JSONObject> response = call.execute();
+        JSONObject jsonObject = response.body();
         return jsonObject;
     }
 }
