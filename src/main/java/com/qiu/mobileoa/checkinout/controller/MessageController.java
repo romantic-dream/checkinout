@@ -200,7 +200,7 @@ public class MessageController {
         if (redisTemplate.opsForValue().get("access_token")==null){
             JSONObject snsAccessToken = weixinClient.getSnsAccessToken(code);
         }
-        if (new Date().getTime()>(Long)redisTemplate.opsForValue().get("expire")+7200){
+        if (new Date().getTime()>((Long)redisTemplate.opsForValue().get("expire_in")+7200*1000)){
             JSONObject jsonObject1 = weixinClient.getRefreshToken(accessToken);
         }
         accessToken = redisTemplate.opsForValue().get("access_token").toString();
