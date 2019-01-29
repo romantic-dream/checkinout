@@ -1,3 +1,4 @@
+/*
 package com.qiu.mobileoa.checkinout.controller;
 
 import com.alibaba.fastjson.JSONObject;
@@ -31,3 +32,4 @@ public class UserController {
         userService.checkInOut(openid,new Date());
     }
 }
+*/
