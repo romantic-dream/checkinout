@@ -69,8 +69,7 @@ public class MessageController {
             String toUserName = jsonObject.getString("ToUserName");
             String event = jsonObject.getString("Event");
             if (event.equals("subscribe")){
-                accessToken = redisTemplate.opsForValue().get("access_token").toString();
-                if (accessToken==null){
+                if (redisTemplate.opsForValue().get("access_token")==null){
                     JSONObject snsAccessToken = weixinClient.getSnsAccessToken(code);
                     accessToken = redisTemplate.opsForValue().get("access_token").toString();
                 }
@@ -78,6 +77,7 @@ public class MessageController {
                     JSONObject jsonObject1 = weixinClient.getRefreshToken(accessToken);
                     accessToken = jsonObject1.getString("access_token");
                 }
+                accessToken = redisTemplate.opsForValue().get("access_token").toString();
                 JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
                 String nickname = userInfo.getString("nickname");
                 User oldUser = userService.getById(fromUserName);
