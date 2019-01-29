@@ -101,11 +101,13 @@ public class MessageController {
             }
 
             if (event.equals("unsubscribe")){
+                accessToken = redisTemplate.opsForValue().get("access_token").toString();
                 JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
                 String nickname = userInfo.getString("nickname");
                 String openid = userInfo.getString("openid");
 
                 MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
+                messageAutoResponseDTO.setContent(nickname+"，好走不送！！！");
                 return messageAutoResponseDTO;
             }
 
