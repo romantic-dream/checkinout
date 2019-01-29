@@ -71,7 +71,11 @@ public class WeixinClientImpl implements WeixinClient {
         Call<JSONObject> call = weixinApi.refreshToken(appid, "refresh_token", refreshtoken);
         Response<JSONObject> response = call.execute();
         JSONObject jsonObject = response.body();
-        logger.info(jsonObject.toJSONString());
+        String refresh_token = jsonObject.getString("refresh_token");
+        String access_token = jsonObject.getString("access_token");
+        redisTemplate.opsForValue().set("expire",new Date().getTime());
+        redisTemplate.opsForValue().set("refresh_token",refresh_token);
+        redisTemplate.opsForValue().set("access_token",access_token);
         return jsonObject;
     }
 }

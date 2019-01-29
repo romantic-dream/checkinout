@@ -199,11 +199,9 @@ public class MessageController {
     private JSONObject getJsonObject(String fromUserName) throws IOException {
         if (redisTemplate.opsForValue().get("access_token")==null){
             JSONObject snsAccessToken = weixinClient.getSnsAccessToken(code);
-            accessToken = redisTemplate.opsForValue().get("access_token").toString();
         }
         if (new Date().getTime()>(Long)redisTemplate.opsForValue().get("expire")+7200){
             JSONObject jsonObject1 = weixinClient.getRefreshToken(accessToken);
-            accessToken = jsonObject1.getString("access_token");
         }
         accessToken = redisTemplate.opsForValue().get("access_token").toString();
         return weixinClient.getSnsUserInfo(accessToken,fromUserName);
