@@ -51,6 +51,8 @@ public class MessageController {
     @Value("${checkInOut.longitude}")
     private Double checkLongitude;
 
+    public String accessToken;
+
     /*@GetMapping("/receive")
     public String receive(@RequestParam Map<String,String> allparams){
         logger.info("{}",allparams);
@@ -66,11 +68,14 @@ public class MessageController {
             String fromUserName = jsonObject.getString("FromUserName");
             String toUserName = jsonObject.getString("ToUserName");
             String event = jsonObject.getString("Event");
-            JSONObject snsAccessToken = weixinClient.getSnsAccessToken(code);
-            String accessToken = snsAccessToken.getString("access_token");
             if (event.equals("subscribe")){
-                if (new Date().getTime()>(Long)redisTemplate.opsForValue().get("access_token")+30){
-                    JSONObject jsonObject1 = weixinClient.getRefreshToken(redisTemplate.opsForValue().get("refresh_token").toString());
+                accessToken = redisTemplate.opsForValue().get("access_token").toString();
+                if (accessToken==null){
+                    JSONObject snsAccessToken = weixinClient.getSnsAccessToken(code);
+                    accessToken = redisTemplate.opsForValue().get("access_token").toString();
+                }
+                if (new Date().getTime()>(Long)redisTemplate.opsForValue().get("expire")+7200){
+                    JSONObject jsonObject1 = weixinClient.getRefreshToken(accessToken);
                     accessToken = jsonObject1.getString("access_token");
                 }
                 JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
@@ -136,10 +141,6 @@ public class MessageController {
                 }
 
                 if (eventKey.equals("checkinout")){
-                    JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
-                    String nickname = userInfo.getString("nickname");
-                    logger.info(nickname);
-
 
                     String positionUserKey="position" + fromUserName;
                     Double latitude = (Double) redisTemplate.opsForHash().get(positionUserKey, "latitude");
@@ -191,7 +192,7 @@ public class MessageController {
                         offWorkTime.set(Calendar.MINUTE, 0);
                         offWorkTime.set(Calendar.MILLISECOND,0);
                         redisTemplate.opsForValue().set(fromUserName+"offWork",offWorkTime.getTimeInMillis());
-                        redisTemplate.expire(fromUserName+"offWork",19, TimeUnit.HOURS);
+                        redisTemplate.expire(fromUserName+"offWork",14, TimeUnit.HOURS);
                     }else {
                         content="不在打卡时间内";
                     }
