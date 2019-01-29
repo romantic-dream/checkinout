@@ -69,16 +69,7 @@ public class MessageController {
             String toUserName = jsonObject.getString("ToUserName");
             String event = jsonObject.getString("Event");
             if (event.equals("subscribe")){
-                if (redisTemplate.opsForValue().get("access_token")==null){
-                    JSONObject snsAccessToken = weixinClient.getSnsAccessToken(code);
-                    accessToken = redisTemplate.opsForValue().get("access_token").toString();
-                }
-                if (new Date().getTime()>(Long)redisTemplate.opsForValue().get("expire")+7200){
-                    JSONObject jsonObject1 = weixinClient.getRefreshToken(accessToken);
-                    accessToken = jsonObject1.getString("access_token");
-                }
-                accessToken = redisTemplate.opsForValue().get("access_token").toString();
-                JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
+                JSONObject userInfo = getJsonObject(fromUserName);
                 String nickname = userInfo.getString("nickname");
                 User oldUser = userService.getById(fromUserName);
                 if (oldUser!=null){
@@ -101,13 +92,7 @@ public class MessageController {
             }
 
             if (event.equals("unsubscribe")){
-                accessToken = redisTemplate.opsForValue().get("access_token").toString();
-                JSONObject userInfo = weixinClient.getSnsUserInfo(accessToken,fromUserName);
-                String nickname = userInfo.getString("nickname");
-                String openid = userInfo.getString("openid");
-
                 MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
-                messageAutoResponseDTO.setContent(nickname+"，好走不送！！！");
                 return messageAutoResponseDTO;
             }
 
@@ -209,6 +194,19 @@ public class MessageController {
 
 
         return null;
+    }
+
+    private JSONObject getJsonObject(String fromUserName) throws IOException {
+        if (redisTemplate.opsForValue().get("access_token")==null){
+            JSONObject snsAccessToken = weixinClient.getSnsAccessToken(code);
+            accessToken = redisTemplate.opsForValue().get("access_token").toString();
+        }
+        if (new Date().getTime()>(Long)redisTemplate.opsForValue().get("expire")+7200){
+            JSONObject jsonObject1 = weixinClient.getRefreshToken(accessToken);
+            accessToken = jsonObject1.getString("access_token");
+        }
+        accessToken = redisTemplate.opsForValue().get("access_token").toString();
+        return weixinClient.getSnsUserInfo(accessToken,fromUserName);
     }
 
     private MessageAutoResponseDTO getMessageAutoResponseDTO(String fromUserName, String toUserName) {
