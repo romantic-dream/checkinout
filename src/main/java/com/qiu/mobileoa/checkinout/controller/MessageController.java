@@ -39,9 +39,6 @@ public class MessageController {
     private UserServiceImpl userService;
 
 
-    @Value("${weixin.code}")
-    private String code;
-
     @Autowired
     private RedisTemplate redisTemplate;
 
