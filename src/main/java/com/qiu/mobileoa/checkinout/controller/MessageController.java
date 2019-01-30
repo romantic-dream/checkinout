@@ -78,7 +78,7 @@ public class MessageController {
                 User oldUser = userService.getById(fromUserName);
                 if (oldUser!=null){
                     MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
-                    messageAutoResponseDTO.setContent(String.format("你好，%s,欢迎订阅！",nickname));
+                    messageAutoResponseDTO.setContent(String.format("你好，%s,欢迎回来！",nickname));
                     return messageAutoResponseDTO;
                 }
                 MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
@@ -134,6 +134,11 @@ public class MessageController {
                 if (eventKey.equals("checkinout")){
 
                     String positionUserKey="position" + fromUserName;
+                    if(redisTemplate.opsForHash().get(positionUserKey, "latitude")==null ||  redisTemplate.opsForHash().get(positionUserKey, "longitude")==null){
+                        MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
+                        messageAutoResponseDTO.setContent("请点击上方的按钮，开启位置信息");
+                        return messageAutoResponseDTO;
+                    }
                     Double latitude = (Double) redisTemplate.opsForHash().get(positionUserKey, "latitude");
                     Double longitude = (Double) redisTemplate.opsForHash().get(positionUserKey, "longitude");
                     //当前位置的经纬度
@@ -164,7 +169,7 @@ public class MessageController {
 
                     String content="";
                     if (time.isAfter(onWorkStart)&&time.isBefore(onWorkEnd)){
-                        content="上班打卡成功";
+                        content="上班打卡成功,祝您工作愉快！";
                         userService.checkInOut(fromUserName,new Date());
                         Calendar onWorkTime = Calendar.getInstance();
                         onWorkTime.set(Calendar.HOUR, 9);
@@ -175,7 +180,7 @@ public class MessageController {
                         redisTemplate.opsForValue().set(fromUserName+"onWork",onWorkTime.getTimeInMillis());
                         redisTemplate.expire(fromUserName+"onWork",8, TimeUnit.HOURS);
                     }else if (time.isAfter(offWorkStart)&&time.isBefore(offWorkEnd)){
-                        content="下班打卡成功";
+                        content="下班打卡成功！";
                         userService.checkInOut(fromUserName,new Date());
                         Calendar offWorkTime = Calendar.getInstance();
                         offWorkTime.set(Calendar.HOUR, 18);
@@ -185,10 +190,16 @@ public class MessageController {
                         redisTemplate.opsForValue().set(fromUserName+"offWork",offWorkTime.getTimeInMillis());
                         redisTemplate.expire(fromUserName+"offWork",14, TimeUnit.HOURS);
                     }else {
-                        content="不在打卡时间内";
+                        content="不在打卡时间内,请点击打卡详细按钮！";
                     }
                     MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
                     messageAutoResponseDTO.setContent(content);
+                    return messageAutoResponseDTO;
+                }
+
+                if (eventKey.equals("checkDetail")){
+                    MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
+                    messageAutoResponseDTO.setContent("打卡规定时间：上午8:00-9:00 ，下午17:00-18:00");
                     return messageAutoResponseDTO;
                 }
             }
