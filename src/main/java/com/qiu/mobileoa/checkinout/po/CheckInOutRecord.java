@@ -7,8 +7,6 @@ public class CheckInOutRecord {
 
     private String openid;
 
-    private Integer type;
-
     private Date time;
 
     public Integer getId() {
@@ -25,14 +23,6 @@ public class CheckInOutRecord {
 
     public void setOpenid(String openid) {
         this.openid = openid == null ? null : openid.trim();
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
     }
 
     public Date getTime() {

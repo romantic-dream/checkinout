@@ -1,5 +1,8 @@
 package com.qiu.mobileoa.checkinout.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.qiu.mobileoa.checkinout.dao.CheckInOutRecordMapper;
 import com.qiu.mobileoa.checkinout.dao.UserMapper;
 import com.qiu.mobileoa.checkinout.po.CheckInOutRecord;
@@ -9,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -37,4 +41,15 @@ public class UserServiceImpl implements UserService {
         checkInOutRecord.setTime(time);
         checkInOutRecordMapper.insert(checkInOutRecord);
     }
+
+    @Override
+
+    public PageInfo<User> getWithPage(Integer pageNum) {
+        PageHelper.startPage(pageNum,1);
+        Page<User> users = userMapper.selectWithPage();
+        PageInfo<User> userPageInfo = users.toPageInfo();
+        return userPageInfo;
+    }
+
+
 }

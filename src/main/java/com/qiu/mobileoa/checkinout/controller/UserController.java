@@ -1,7 +1,9 @@
-/*
 package com.qiu.mobileoa.checkinout.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageInfo;
+import com.qiu.mobileoa.checkinout.po.CheckInOutRecord;
+import com.qiu.mobileoa.checkinout.po.User;
 import com.qiu.mobileoa.checkinout.service.UserService;
 import com.qiu.mobileoa.checkinout.service.impl.WeixinClientImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @EnableAutoConfiguration
@@ -17,19 +20,16 @@ import java.util.Date;
 @CrossOrigin
 public class UserController {
 
-    @Autowired
-    private WeixinClientImpl weixinClient;
 
     @Autowired
     private UserService userService;
 
-    @PostMapping("/checkInOut")
-    public void checkInOut(@RequestBody String code) throws IOException {
-        JSONObject snsAccessToken = weixinClient.getSnsAccessToken(code);
-        String access_token = snsAccessToken.getString("access_token");
-        String openid = snsAccessToken.getString("openid");
-        JSONObject snsUserInfo = weixinClient.getSnsUserInfo(access_token, openid);
-        userService.checkInOut(openid,new Date());
+
+    @GetMapping("/getWithPage")
+    public PageInfo<User> getWithPage(@RequestParam(required = false,defaultValue = "1") Integer pageNum){
+        PageInfo<User> userPageInfo = userService.getWithPage(pageNum);
+        return userPageInfo;
     }
+
+
 }
-*/

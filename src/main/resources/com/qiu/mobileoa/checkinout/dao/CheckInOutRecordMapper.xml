@@ -4,8 +4,19 @@
   <resultMap id="BaseResultMap" type="com.qiu.mobileoa.checkinout.po.CheckInOutRecord">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="openId" jdbcType="VARCHAR" property="openid" />
-    <result column="type" jdbcType="INTEGER" property="type" />
     <result column="time" jdbcType="TIMESTAMP" property="time" />
+  </resultMap>
+  <resultMap id="CheckRecordDTO" type="com.qiu.mobileoa.checkinout.dto.CheckRecordDTO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="openId" jdbcType="VARCHAR" property="openid" />
+    <result column="time" jdbcType="TIMESTAMP" property="time" />
+    <association property="user" column="openid" javaType="com.qiu.mobileoa.checkinout.po.User" select="selectUser"></association>
+  </resultMap>
+  <resultMap id="User" type="com.qiu.mobileoa.checkinout.po.User">
+    <id column="openId" jdbcType="VARCHAR" property="openid" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="gender" jdbcType="INTEGER" property="gender" />
+    <result column="avatar_url" jdbcType="CHAR" property="avatarUrl" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -66,7 +77,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, openId, type, time
+    id, openId, time
+  </sql>
+  <sql id="User_Column_List">
+    openId, nickname, gender, avatar_url
   </sql>
   <select id="selectByExample" parameterType="com.qiu.mobileoa.checkinout.po.CheckInOutRecordExample" resultMap="BaseResultMap">
     select
@@ -193,4 +207,17 @@
       time = #{time,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectWithTime"  resultMap="CheckRecordDTO">
+    select
+    <include refid="Base_Column_List" />
+    from check_in_out_record
+    where time &lt; #{time }
+    order by time desc limit 10
+  </select>
+  <select id="selectUser" resultMap="User">
+    select
+    <include refid="User_Column_List" />
+    from user
+    where openId=#{openid,jdbcType=VARCHAR}
+  </select>
 </mapper>

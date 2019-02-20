@@ -1,5 +1,6 @@
 package com.qiu.mobileoa.checkinout.dao;
 
+import com.github.pagehelper.Page;
 import com.qiu.mobileoa.checkinout.po.User;
 import com.qiu.mobileoa.checkinout.po.UserExample;
 import java.util.List;
@@ -27,4 +28,7 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+
+    Page<User> selectWithPage();
+
 }

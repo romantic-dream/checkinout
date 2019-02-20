@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.grum.geocalc.Coordinate;
 import com.grum.geocalc.EarthCalc;
 import com.grum.geocalc.Point;
-import com.qiu.mobileoa.checkinout.dto.MessageAutoResponseDTO;
+import com.qiu.mobileoa.checkinout.dto.*;
 import com.qiu.mobileoa.checkinout.po.User;
 import com.qiu.mobileoa.checkinout.service.impl.UserServiceImpl;
 import com.qiu.mobileoa.checkinout.service.impl.WeixinClientImpl;
@@ -24,6 +24,8 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -190,17 +192,49 @@ public class MessageController {
                         redisTemplate.opsForValue().set(fromUserName+"offWork",offWorkTime.getTimeInMillis());
                         redisTemplate.expire(fromUserName+"offWork",14, TimeUnit.HOURS);
                     }else {
-                        content="不在打卡时间内,请点击打卡详细按钮！";
+                        content="不在打卡时间内,请获取文字消息！";
                     }
                     MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
                     messageAutoResponseDTO.setContent(content);
                     return messageAutoResponseDTO;
                 }
 
-                if (eventKey.equals("checkDetail")){
+                if (eventKey.equals("word")){
                     MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(fromUserName, toUserName);
                     messageAutoResponseDTO.setContent("打卡规定时间：上午8:00-9:00 ，下午17:00-18:00");
                     return messageAutoResponseDTO;
+                }
+
+                if (eventKey.equals("image")){
+                    ImageAutoResponseDTO imageAutoResponseDTO = new ImageAutoResponseDTO();
+                    imageAutoResponseDTO.setToUserName(fromUserName);
+                    imageAutoResponseDTO.setFromUserName(toUserName);
+                    imageAutoResponseDTO.setCreateTime(new Date().getTime());
+                    imageAutoResponseDTO.setMsgType("image");
+                    MediaId mediaId = new MediaId();
+                    mediaId.setMeidaId("rFX3usyThZ0hNRidJPeBayzk0unwYRPPrjog8QHFxqk");
+                    imageAutoResponseDTO.setMediaId(mediaId);
+                    return imageAutoResponseDTO;
+                }
+
+                if (eventKey.equals("wordimage")){
+                    NewsAutoResponseDTO newsAutoResponseDTO = new NewsAutoResponseDTO();
+                    newsAutoResponseDTO.setToUserName(fromUserName);
+                    newsAutoResponseDTO.setFromUserName(toUserName);
+                    newsAutoResponseDTO.setCreateTime(new Date().getTime());
+                    newsAutoResponseDTO.setMsgType("news");
+
+                    List<Articles> articles = new LinkedList<Articles>();
+                    Articles articles1 = new Articles();
+                    articles1.setDescription("美丽的风景图");
+                    articles1.setTitle("风景图");
+                    articles1.setPicUrl("http://mmbiz.qpic.cn/mmbiz_jpg/nibTRwTVPfofobwyz9YFsEG0XFsKl8f08k6D4OCCMrWdpJ3gyOFv7RzvWtosc8q4ickX2TMiachZA5km96kjsgAjg/0?wx_fmt=jpeg");
+                    articles1.setUrl("http://mp.weixin.qq.com/s?__biz=MzU3NTgyMzI2Nw==&mid=100000003&idx=1&sn=215b58eb3733754f459653497457c9a4&chksm=7d1c0dcf4a6b84d927f5d9794c053fef21767e74f244e3c451cda004cc236d3eb31a4b1965b3#rd");
+                    articles.add(articles1);
+
+                    newsAutoResponseDTO.setArticleCount(articles.size());
+                    newsAutoResponseDTO.setArticles(articles);
+                    return newsAutoResponseDTO;
                 }
             }
 

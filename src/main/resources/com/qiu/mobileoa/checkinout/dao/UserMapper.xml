@@ -193,4 +193,9 @@
       avatar_url = #{avatarUrl,jdbcType=CHAR}
     where openId = #{openid,jdbcType=VARCHAR}
   </update>
+  <select id="selectWithPage" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user
+  </select>
 </mapper>

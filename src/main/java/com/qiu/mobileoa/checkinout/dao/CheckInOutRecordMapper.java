@@ -1,7 +1,10 @@
 package com.qiu.mobileoa.checkinout.dao;
 
+import com.qiu.mobileoa.checkinout.dto.CheckRecordDTO;
 import com.qiu.mobileoa.checkinout.po.CheckInOutRecord;
 import com.qiu.mobileoa.checkinout.po.CheckInOutRecordExample;
+
+import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,4 +30,6 @@ public interface CheckInOutRecordMapper {
     int updateByPrimaryKeySelective(CheckInOutRecord record);
 
     int updateByPrimaryKey(CheckInOutRecord record);
+
+    List<CheckRecordDTO> selectWithTime(Date time);
 }
