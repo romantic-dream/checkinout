@@ -226,8 +226,8 @@ public class MessageController {
 
                     List<Articles> articles = new LinkedList<Articles>();
                     Articles articles1 = new Articles();
-                    articles1.setDescription("美丽的风景图");
-                    articles1.setTitle("风景图");
+                    articles1.setDescription("打领带的简单教学");
+                    articles1.setTitle("打领带的图片");
                     articles1.setPicUrl("http://mmbiz.qpic.cn/mmbiz_jpg/nibTRwTVPfofobwyz9YFsEG0XFsKl8f08k6D4OCCMrWdpJ3gyOFv7RzvWtosc8q4ickX2TMiachZA5km96kjsgAjg/0?wx_fmt=jpeg");
                     articles1.setUrl("http://mp.weixin.qq.com/s?__biz=MzU3NTgyMzI2Nw==&mid=100000003&idx=1&sn=215b58eb3733754f459653497457c9a4&chksm=7d1c0dcf4a6b84d927f5d9794c053fef21767e74f244e3c451cda004cc236d3eb31a4b1965b3#rd");
                     articles.add(articles1);
